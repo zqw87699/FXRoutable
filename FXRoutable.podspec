@@ -13,13 +13,9 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "7.0"
 
-  s.source_files  = "Classes/*.{h,m}"
-
-  s.public_header_files = "Classes/*.h"
-
   s.frameworks = "Foundation", "UIKit"
 
-  s.module_name = 'FXRoutable’ 
+  s.module_name = 'FXRoutable' 
 
   s.requires_arc = true
 
