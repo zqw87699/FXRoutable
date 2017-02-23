@@ -24,7 +24,7 @@ s.subspec 'Core' do |core|
     core.public_header_files = 'Classes/Core/*.h'
 
     core.dependency 'FXCommon/Core'
-    core.dependency 'FXRoutable/API’
+    core.dependency 'FXRoutable/API'
 
 end
 
