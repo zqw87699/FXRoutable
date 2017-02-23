@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "FXCommon.h"
 #import "IFXRoutableProtocol.h"
 #import "FXRouterOption.h"
 
@@ -16,7 +15,7 @@
 
 @interface FXRoutable : NSObject
 
-AS_SINGLETON(FXRoutable);
++ (instancetype)sharedInstance;
 
 /*
  *  注册路由(block)

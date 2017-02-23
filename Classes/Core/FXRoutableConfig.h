@@ -8,13 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "FXSingleton.h"
 #import "IFXWebRoutableProtocol.h"
 #import "IFXRegisterRoutableProtocol.h"
 
 @interface FXRoutableConfig : NSObject
 
-AS_SINGLETON(FXRoutableConfig)
++ (instancetype)sharedInstance;
 
 @property (nonatomic, readonly) Class defaultWebViewControllerClass;
 

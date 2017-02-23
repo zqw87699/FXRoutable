@@ -10,7 +10,15 @@
 
 @implementation FXRoutableConfig
 
-DEF_SINGLETON_INIT(FXRoutableConfig)
++(instancetype)sharedInstance{
+    static dispatch_once_t onceToken;
+    static FXRoutableConfig*sharedObject;
+    dispatch_once(&onceToken, ^{
+        sharedObject = [[FXRoutableConfig alloc] init];
+        [sharedObject singleInit];
+    });
+    return sharedObject;
+}
 
 -(void) singleInit {
     _defaultNavigationControllerClass = [UINavigationController class];

@@ -9,6 +9,7 @@
 #import "FXRoutable.h"
 #import "FXRoutableConfig.h"
 #import "FXLogMacros.h"
+#import "FXCommon.h"
 
 @interface FXRoutable()
 
@@ -20,7 +21,15 @@
 
 @implementation FXRoutable
 
-DEF_SINGLETON_INIT(FXRoutable)
++(instancetype)sharedInstance{
+    static dispatch_once_t onceToken;
+    static FXRoutable*sharedObject;
+    dispatch_once(&onceToken, ^{
+        sharedObject = [[FXRoutable alloc] init];
+        [sharedObject singleInit];
+    });
+    return sharedObject;
+}
 
 -(void) singleInit {
     self.routes = [[NSMutableDictionary alloc] init];
