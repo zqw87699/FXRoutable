@@ -24,7 +24,8 @@ DEF_SINGLETON_INIT(FXRoutable)
 
 -(void) singleInit {
     self.routes = [[NSMutableDictionary alloc] init];
-
+    self.returnNodes = [[NSMutableArray alloc] init];
+    
     Class registerClazz = [[FXRoutableConfig sharedInstance] urlRegisterClass];
     if (registerClazz) {
         [registerClazz routerURLRegister:self];
@@ -54,7 +55,7 @@ DEF_SINGLETON_INIT(FXRoutable)
     if (controllerClass != Nil && [controllerClass conformsToProtocol:@protocol(IFXRoutableProtocol)]) {
         option.openClass = controllerClass;
     } else {
-        FXLogError(@"未实现IFXRoutableProtocol协议");
+        FXLogError(@"%@未实现IFXRoutableProtocol协议",controllerClass);
         @throw [NSException exceptionWithName:@"RouteControllerClass"
                                        reason:@"Route controller class invalid（non IFXRoutableProtocol）"
                                      userInfo:nil];
@@ -296,6 +297,59 @@ DEF_SINGLETON_INIT(FXRoutable)
             }
         });
     }
+}
+
+-(void)close:(BOOL)animated {
+    if ([NSThread isMainThread]) {
+        UINavigationController *nav = [self currentNavigationController];
+        if (nav) {
+            if ([[nav viewControllers] count] > 1) {
+                [nav popViewControllerAnimated:animated];
+            } else if(nav.presentingViewController) {
+                [nav dismissViewControllerAnimated:animated completion:NULL];
+            }
+        } else if ([[self allModalControllers] count] > 0) {
+            [[[self allModalControllers] lastObject] dismissViewControllerAnimated:animated completion:NULL];
+        }
+    } else {
+        FX_BLOCK_WEAK FXRoutable *selfObject = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UINavigationController *nav = [selfObject currentNavigationController];
+            if (nav) {
+                if ([[nav viewControllers] count] > 1) {
+                    [nav popViewControllerAnimated:animated];
+                } else if(nav.presentingViewController) {
+                    [nav dismissViewControllerAnimated:animated completion:NULL];
+                }
+            } else if ([[selfObject allModalControllers] count] > 0) {
+                [[[self allModalControllers] lastObject] dismissViewControllerAnimated:animated completion:NULL];
+            }
+        });
+    }
+    
+}
+-(void)closeAll:(BOOL)animated {
+    if ([NSThread isMainThread]) {
+        NSArray *modals = [self allModalControllers];
+        if ([modals count] > 1) {
+            [[modals firstObject] dismissViewControllerAnimated:animated completion:NULL];
+        } else {
+            UINavigationController *nav = [self currentNavigationController];
+            [nav popToRootViewControllerAnimated:animated];
+        }
+    } else {
+        FX_BLOCK_WEAK FXRoutable *selfObject = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSArray *modals = [selfObject allModalControllers];
+            if ([modals count] > 1) {
+                [[modals firstObject] dismissViewControllerAnimated:animated completion:NULL];
+            } else {
+                UINavigationController *nav = [selfObject currentNavigationController];
+                [nav popToRootViewControllerAnimated:animated];
+            }
+        });
+    }
+    
 }
 
 /**

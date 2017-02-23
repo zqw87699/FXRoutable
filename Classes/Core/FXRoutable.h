@@ -58,8 +58,25 @@ AS_SINGLETON(FXRoutable);
  */
 - (void)open:(NSString *)url animated:(BOOL)animated;
 
+/**
+ *  打开url(带参数)
+ */
 - (void)open:(NSString *)url animated:(BOOL)animated extraParams:(NSDictionary *)extraParams;
 
+/**
+ *  打开root页面
+ */
 - (void)openRoot:(UIViewController*) rootViewController;
+/**
+ *  关闭视图控制器（当导航控制器[viewControllers count] == 1时，执行dismiss:completion: 否则执行 pop:）
+ *
+ *  @param animated 动画
+ */
+- (void) close:(BOOL) animated;
+
+/**
+ *  关闭所有视图控制器（当rootViewController有模态视图控制器打开时则关闭模态，否则执行popRoot）
+ */
+- (void) closeAll:(BOOL) animated;
 
 @end
