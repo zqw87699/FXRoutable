@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "FXRoutable"
-  s.version      = "1.0.5"
+  s.version      = "1.0.6"
   s.summary      = "路由框架"
 
   s.homepage     = "https://github.com/zqw87699/FXRoutable"
@@ -19,21 +19,12 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-s.subspec 'Core' do |score|
-    score.source_files = 'Classes/Core/*'
-    score.public_header_files = 'Classes/Core/*.h'
-
-    score.dependency 'FXCommon/Core'
-    score.dependency 'FXCommon/Utiles'
-    score.dependency 'FXRoutable/API'
-
-end
-
-s.subspec 'API' do |sapi|
-    sapi.source_files = 'Classes/API/*'
-    sapi.public_header_files = 'Classes/API/*.h'
-end
+  s.source_files = 'Classes/*'
+  s.public_header_files = 'Classes/*.h'
 
   s.dependency "FXLog"
+  s.dependency "FXCommon/Core" 
+  s.dependency "FXCommon/Utiles"
+  s.dependency "FXRoutableAPI"
 
 end
