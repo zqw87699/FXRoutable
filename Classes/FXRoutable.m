@@ -223,6 +223,7 @@
                 [mutableExtraParams addEntriesFromDictionary:extraParams];
             }
             controller = [[webVCClazz alloc] initWithURL:url routerParams:mutableExtraParams];
+            [self openController:controller Option:option Animated:animated];
         } else {
             FXLogDebug(@"%@ 无法打开链接(使用浏览器打开):%@",NSStringFromClass(webVCClazz),url);
             [self openExternal:url];//使用原始链接打开
@@ -232,6 +233,31 @@
         FXLogDebug(@"没有找到WebVC，使用浏览器打开此链接:%@",url);
         [self openExternal:url];//使用原始链接打开
         return;
+    }
+}
+
+- (void)openController:(UIViewController*)controller Option:(FXRouterOption*)option Animated:(BOOL)animated{
+    if ([option isModal]) {
+        NSArray *modals = [self allModalControllers];
+        id presentingVC = [modals lastObject];
+        
+        if ([controller isKindOfClass:[UINavigationController class]]) {
+            [presentingVC presentViewController:controller animated:animated completion:NULL];
+        } else {
+            UINavigationController *nav = nil;
+            Class navClazz = option.navigationControllerClass;
+            if (navClazz != Nil) {
+                nav= [[navClazz alloc] initWithRootViewController:controller];
+            } else {
+                nav = [[UINavigationController alloc] initWithRootViewController:controller];
+            }
+            FXLogDebug(@"模态打开视图控制器:%@",NSStringFromClass(controller.class));
+            [presentingVC presentViewController:nav animated:animated completion:NULL];
+        }
+    } else {
+        UINavigationController *nav = [self currentNavigationController];
+        FXLogDebug(@"推送打开视图控制器:%@",NSStringFromClass(controller.class));
+        [nav pushViewController:controller animated:animated];
     }
 }
 
@@ -264,28 +290,7 @@
     controller.modalTransitionStyle = option.transitionStyle;
     controller.modalPresentationStyle = option.presentationStyle;
     
-    if ([option isModal]) {
-        NSArray *modals = [self allModalControllers];
-        id presentingVC = [modals lastObject];
-        
-        if ([controller isKindOfClass:[UINavigationController class]]) {
-            [presentingVC presentViewController:controller animated:animated completion:NULL];
-        } else {
-            UINavigationController *nav = nil;
-            Class navClazz = option.navigationControllerClass;
-            if (navClazz != Nil) {
-                nav= [[navClazz alloc] initWithRootViewController:controller];
-            } else {
-                nav = [[UINavigationController alloc] initWithRootViewController:controller];
-            }
-            FXLogDebug(@"模态打开视图控制器:%@",NSStringFromClass(controller.class));
-            [presentingVC presentViewController:nav animated:animated completion:NULL];
-        }
-    } else {
-        UINavigationController *nav = [self currentNavigationController];
-        FXLogDebug(@"推送打开视图控制器:%@",NSStringFromClass(controller.class));
-        [nav pushViewController:controller animated:animated];
-    }
+    [self openController:controller Option:option Animated:animated];
 }
 
 - (void)openRoot:(id)rootViewController{
